@@ -1,34 +1,12 @@
-/*
- * CSC A48 - Intro to Computer Science II, Summer 2020
- *
- * This file provides utilities required to draw the image your turtle will
- * create once implemented.
- *
- * You do NOT have to understand (or even read) this file as part of the
- * as part of the assignment. However, if you're curious, and you spend a bit
- * of time looking through the code here, you will learn something :)
- *
- * Derived by an image processing library by Francisco Estrada
- * Modified for this assignment by Mustafa Quraish
- *
- * (c) 2020 Francisco Estrada & Mustafa Quraish
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 typedef struct image {
-  /**
-   * The pixel data here is stored in row major order an unsigned char simply
-   * stores numbers from 0-255, you can treat it as an int otherwise, just make
-   * sure you **don't** assign values < 0 or > 255, or else you will get
-   * unexpected results
-   */
   unsigned char *data;
 
   int sx; // Width of image
-  int sy; // Height of image (assume they are the same for this assignment)
+  int sy; // Height of image
 
 } Image;
 
