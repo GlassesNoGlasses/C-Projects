@@ -1,27 +1,6 @@
 
 #include "q_imgUtils.c"
 
-/**
- * This is the structure we are going to use to store each individual node of
- * the BST. Remember that each Quad corresponds to a rectangular area on the
- * image:
- *
- *                (tx,ty)         w
- *                   x-------------------------
- *                   |                        |
- *                   |                        |
- *                   |                        |
- *                   |                        |
- *                 h |          Quad          |
- *                   |    key = tx+(ty*sx)    |
- *                   |                        |
- *                   |                        |
- *                   |                        |
- *                   |                        |
- *                   -------------------------x
- *                                       (tx + w, ty + h)
- *
- */
 typedef struct quad
 {
   int tx, ty; // The (x,y) coordinates of the top-left pixel in the quad
@@ -29,14 +8,8 @@ typedef struct quad
   int h;      // How many pixels high the quad is
 
   int sx; // Width of the original image, this is needed for the key.
-          // This *MUST* be the same for all nodes in the BST
 
-  int key; // A unique identifier (remember we discussed BST nodes
-           // should have unique keys to identify each node). The
-           // key identifier here will be created as:
-           //       key = tx + (ty * sx)
-           // This means that only one quad can start at a specific
-           // pixel.
+  int key; // A unique identifier
 
   int wsplit; // 1 if this quad is supposed to be split along the width
               // 0 if this quad is supposed to be split along the height
@@ -75,11 +48,7 @@ Quad *new_Quad(int tx, int ty, int w, int h, int wsplit, int sx)
 Quad *BST_insert(Quad *root, Quad *new_node)
 {
   /**
-   * This function inserts a new Quad node into the BST rooted atc'root'. The
-   * new_node must already be initialized with validcdata, and must have a
-   * unique key.
-   *
-   * printf("Duplicate Quad (tx,ty,sx)=%d,%d, %d, was ignored\n",....);
+   * This function inserts a new Quad node into the BST rooted atc'root'
    */
   if (root == NULL)
   {
@@ -134,8 +103,7 @@ Quad *find_successor(Quad *right_child)
 {
   /**
    * This function finds the successor of a Quad node by searching the right
-   * subtree for the node that is most to the left (that will be the node
-   * with the smallest key in that subtree)
+   * subtree for the node that is most to the left
    */
   if (right_child == NULL) {
     return NULL;
@@ -226,9 +194,7 @@ void BST_inorder(Quad *root, int depth)
 {
   /**
    * This function performs an in-order traversal of the BST and prints out the
-   * information for each Quad using this exactly this print statement:
-   *
-   *  printf("Depth=%d, key=%d, tx:ty (%d:%d), w=%d, h=%d, wsplit=%d\n",...)
+   * information for each Quad
    */
   if (root == NULL) {
     return;
@@ -245,9 +211,7 @@ void BST_preorder(Quad *root, int depth)
 {
   /**
    * This function performs a pre-order traversal of the BST and prints out the
-   * information for each Quad using this exactly this print statement:
-   *
-   *  printf("Depth=%d, key=%d, tx:ty (%d:%d), w=%d, h=%d, wsplit=%d\n",...)
+   * information for each Quad
    */
   if (root == NULL) {
     return;
@@ -264,9 +228,7 @@ void BST_postorder(Quad *root, int depth)
 {
   /**
    * This function performs a post-order traversal of the BST and prints out
-   * the information for each Quad using this exactly this print statement:
-   *
-   *  printf("Depth=%d, key=%d, tx:ty (%d:%d), w=%d, h=%d, wsplit=%d\n",...)
+   * the information for each Quad
    */
 
   if (root == NULL) {
@@ -278,11 +240,7 @@ void BST_postorder(Quad *root, int depth)
   return;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// NOTE: For the remaining functions, you may assume the following:          //
-//       (1) All the Quads are valid (None of them go outside the image)     //
-//       (2) They don't overlap  (A pixel will not be in multiple Quads)     //
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 int checkSum(int colour) {
   if (colour < 0) {
@@ -297,24 +255,12 @@ int checkSum(int colour) {
 int get_colour(Image *im, Quad *q)
 {
   /**
-   * Given an image 'im' and a Quad 'q', get the colour we should be assigning
-   * to the pixels that are in it, and return it. For the sake of this
-   * assignment, we will say this is *average* colour of all the pixels in
-   * the quad.
+   * Given an image 'im' and a Quad 'q', get the average colour assigned
+   * to the pixels that are in it, and return it. 
    *
    * The pixel data is stored in a one dimensional array called 'data' in the
-   * image struct. Make sure you look at the definition of this to understand
-   * how the image is stored. Remember that the pixel data is stored in
-   * row-major order, so to get the colour for pixel (x,y) you will look at the
-   * index
+   * image struct.
    *
-   *                           x + (y * sx)
-   *
-   * of the array.
-   *
-   * TODO: Implement this function. You should not be getting any values
-   *       outside the range of the pixels [0-255] if you have implemented
-   *       this correctly.
    */
   if (im == NULL || q == NULL) {
     return 0;
@@ -356,21 +302,11 @@ int similar(Image *im, Quad *q, int threshold)
 {
   /**
    * Given an image 'im', check if the colours in the area corresponding to the
-   * Quad 'q' are all similar. If not, we will have to split it. For the
-   * purpose of this assigment, we say the colours in a Quad are similar if
-   *
-   *          maxCol - minCol <= threshold
-   *
-   * where maxCol and minCol are the maximum and minimum values respectively
-   * of the pixel colours in the Quad. The threshold is a parameter. This
-   * function should return a 0 if the pixels are not similar enough and the
-   * Quad needs to be split, and 1 otherwise.
-   *
+   * Quad 'q' are all similar.
    */
   if (q == NULL || im == NULL) {
     return 0;
   }
-  // printf("%d\n", simHelp(im, q));
   if (simHelp(im, q) > threshold) {
     return 0;
   }
